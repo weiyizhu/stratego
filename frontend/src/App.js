@@ -8,7 +8,7 @@ function App() {
   const [error, setError] = useState();
   const [inputValue, setInputValue] = useState("");
 
-  const ipAddress = "192.168.7.99"; // change to your localhost address
+  const ipAddress = "127.0.0.1";
   const port = 8080;
   const url = `ws://${ipAddress}:${port}/move`;
 

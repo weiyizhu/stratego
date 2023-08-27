@@ -7,8 +7,17 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+/**
+ * This class implements business logic than handles various socket events
+ */
 public class MoveHandler extends TextWebSocketHandler {
 
+    /**
+     * Handles incoming client messages and updates the game state accordingly
+     * 
+     * @param session The websocket session where clients and the server communicates over
+     * @param message The text message clients send
+     */
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
         System.out.println("message received: " + message.toString());

@@ -25,7 +25,7 @@ public class MoveHandler extends TextWebSocketHandler {
      */
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
-        logger.info("Message received: " + message.toString());
+        logger.info("Message received: {}", message.toString());
         try {
             session.sendMessage(new TextMessage("message received"));
         } catch (IOException e) {
@@ -35,16 +35,16 @@ public class MoveHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        logger.info("Connection established with " + session.getRemoteAddress());
+        logger.info("Connection established with {}", session.getRemoteAddress());
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        logger.info("Connection closed with " + session.getRemoteAddress());
+        logger.info("Connection closed with {}", session.getRemoteAddress());
     }
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
-        logger.error("Transport error: " + exception.toString());
+        logger.error("Transport error: {}", exception.toString());
     }
 }

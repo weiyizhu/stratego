@@ -11,7 +11,8 @@ public class Game {
         this.sessions[1] = session2;
     }
 
-    public String serialize() {
+    @Override
+    public String toString() {
         return "game started";
     }
 

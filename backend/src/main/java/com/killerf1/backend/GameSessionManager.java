@@ -5,13 +5,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.web.socket.WebSocketSession;
 
+interface GameSessionManagerUtils {
+    public Game getGame(WebSocketSession session);
+
+    public Game createNewGame(WebSocketSession session1, WebSocketSession session2);
+
+    public void deleteGame(WebSocketSession session1, WebSocketSession session2);
+
+    public Map<WebSocketSession, Game> getSessionToGame();
+}
+
 /**
  * This singleton class manages the creation/deletion of games and mapping
  * between games and WebSocketSessions
  */
-public final class GameSessionManager {
+public final class GameSessionManager implements GameSessionManagerUtils {
     private static volatile GameSessionManager instance;
-    private Map<WebSocketSession, Game> sessionToGame;
+    private final Map<WebSocketSession, Game> sessionToGame;
 
     private GameSessionManager() {
         this.sessionToGame = new ConcurrentHashMap<>();
@@ -30,10 +40,12 @@ public final class GameSessionManager {
         }
     }
 
+    @Override
     public Game getGame(WebSocketSession session) {
         return sessionToGame.get(session);
     }
 
+    @Override
     public Game createNewGame(WebSocketSession session1, WebSocketSession session2) {
         Game game = new Game(session1, session2);
         sessionToGame.put(session1, game);
@@ -41,11 +53,13 @@ public final class GameSessionManager {
         return game;
     }
 
+    @Override
     public void deleteGame(WebSocketSession session1, WebSocketSession session2) {
         sessionToGame.remove(session1);
         sessionToGame.remove(session2);
     }
 
+    @Override
     public Map<WebSocketSession, Game> getSessionToGame() {
         return this.sessionToGame;
     }

@@ -8,16 +8,20 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 /**
- * This class provides configurations for mapping of the WebSocketHandler to specific URL
+ * This class provides configurations for mapping of the WebSocketHandler to
+ * specific URL
  */
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
+    private Matchmaker matchmaker = Matchmaker.getInstance();
+    private GameSessionManager gameSessionManager = GameSessionManager.getInstance();
 
     /**
      * Registers a WebSocketHandler to a specified URL path
      * 
-     * @param registry Provides methods for configuring WebSocketHandler request mappings
+     * @param registry Provides methods for configuring WebSocketHandler request
+     *                 mappings
      */
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
@@ -37,6 +41,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Bean
     public WebSocketHandler findGameHandler() {
-        return new FindGameHandler();
+        return new FindGameHandler(matchmaker, gameSessionManager);
     }
 }

@@ -22,6 +22,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(moveHandler(), "/move").setAllowedOrigins("*");
+        registry.addHandler(findGameHandler(), "/findGame").setAllowedOrigins("*");
     }
 
     /**
@@ -32,5 +33,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Bean
     public WebSocketHandler moveHandler() {
         return new MoveHandler();
+    }
+
+    @Bean
+    public WebSocketHandler findGameHandler() {
+        return new FindGameHandler();
     }
 }

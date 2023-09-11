@@ -8,10 +8,10 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class FindGameHandler extends TextWebSocketHandler {
 
     private static final Logger logger = LogManager.getLogger();
-    private final MatchmakerUtils matchmaker;
-    private final GameSessionManagerUtils gameSessionManager;
+    private final Matchmaker matchmaker;
+    private final GameSessionManager gameSessionManager;
 
-    public FindGameHandler(MatchmakerUtils matchmaker, GameSessionManagerUtils gameSessionManager) {
+    public FindGameHandler(Matchmaker matchmaker, GameSessionManager gameSessionManager) {
         this.matchmaker = matchmaker;
         this.gameSessionManager = gameSessionManager;
     }

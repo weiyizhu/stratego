@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.web.socket.WebSocketSession;
 
-interface GameSessionManagerUtils {
+interface GameSessionManager {
     public Game getGame(WebSocketSession session);
 
     public Game createNewGame(WebSocketSession session1, WebSocketSession session2);
@@ -19,22 +19,22 @@ interface GameSessionManagerUtils {
  * This singleton class manages the creation/deletion of games and mapping
  * between games and WebSocketSessions
  */
-public final class GameSessionManager implements GameSessionManagerUtils {
-    private static volatile GameSessionManager instance;
+public final class GameSessionManagerImpl implements GameSessionManager {
+    private static volatile GameSessionManagerImpl instance;
     private final Map<WebSocketSession, Game> sessionToGame;
 
-    private GameSessionManager() {
+    private GameSessionManagerImpl() {
         this.sessionToGame = new ConcurrentHashMap<>();
     }
 
-    public static GameSessionManager getInstance() {
-        GameSessionManager result = instance;
+    public static GameSessionManagerImpl getInstance() {
+        GameSessionManagerImpl result = instance;
         if (result != null) {
             return result;
         }
-        synchronized (GameSessionManager.class) {
+        synchronized (GameSessionManagerImpl.class) {
             if (instance == null) {
-                instance = new GameSessionManager();
+                instance = new GameSessionManagerImpl();
             }
             return instance;
         }

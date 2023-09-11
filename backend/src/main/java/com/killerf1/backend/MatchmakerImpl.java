@@ -6,7 +6,7 @@ import java.util.Random;
 
 import org.springframework.web.socket.WebSocketSession;
 
-interface MatchmakerUtils {
+interface Matchmaker {
     public WebSocketSession findMatch(WebSocketSession session);
 
     public void cancelFindMatch(WebSocketSession session);
@@ -17,22 +17,23 @@ interface MatchmakerUtils {
 /**
  * This singleton class manages the business logic of matchmaking
  */
-public final class Matchmaker implements MatchmakerUtils {
-    private static volatile Matchmaker instance;
+public final class MatchmakerImpl implements Matchmaker {
+    private static volatile MatchmakerImpl instance;
     private volatile List<WebSocketSession> waitingSessions;
+    private static Random random = new Random();
 
-    private Matchmaker() {
+    private MatchmakerImpl() {
         this.waitingSessions = new ArrayList<WebSocketSession>();
     }
 
-    public static Matchmaker getInstance() {
-        Matchmaker result = instance;
+    public static MatchmakerImpl getInstance() {
+        MatchmakerImpl result = instance;
         if (result != null) {
             return result;
         }
-        synchronized (Matchmaker.class) {
+        synchronized (MatchmakerImpl.class) {
             if (instance == null) {
-                instance = new Matchmaker();
+                instance = new MatchmakerImpl();
             }
             return instance;
         }
@@ -51,7 +52,6 @@ public final class Matchmaker implements MatchmakerUtils {
         if (waitingSessions.size() == 0) {
             waitingSessions.add(session);
         } else {
-            Random random = new Random();
             int index = random.nextInt(waitingSessions.size());
             oppSession = waitingSessions.get(index);
             waitingSessions.remove(oppSession);

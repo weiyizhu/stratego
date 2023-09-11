@@ -13,31 +13,31 @@ import org.springframework.web.socket.WebSocketSession;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.WARN)
-public class GameSessionManagerTests {
-    
+public class GameSessionManagerImplTests {
+
     @Mock
     WebSocketSession session1;
     @Mock
     WebSocketSession session2;
 
     @Test
-    void createSingleInstance () {
-        GameSessionManager gameSessionManager = GameSessionManager.getInstance();
-        GameSessionManager gameSessionManager2 = GameSessionManager.getInstance();
+    void createSingleInstance() {
+        GameSessionManager gameSessionManager = GameSessionManagerImpl.getInstance();
+        GameSessionManager gameSessionManager2 = GameSessionManagerImpl.getInstance();
         gameSessionManager.createNewGame(session1, session2);
         assertEquals(gameSessionManager.getSessionToGame(), gameSessionManager2.getSessionToGame());
     }
 
     @Test
     void createNewGameTest() {
-        GameSessionManager gameSessionManager = GameSessionManager.getInstance();
+        GameSessionManager gameSessionManager = GameSessionManagerImpl.getInstance();
         gameSessionManager.createNewGame(session1, session2);
         assertEquals(gameSessionManager.getGame(session1), gameSessionManager.getGame(session2));
     }
 
     @Test
     void deleteGameTest() {
-        GameSessionManager gameSessionManager = GameSessionManager.getInstance();
+        GameSessionManager gameSessionManager = GameSessionManagerImpl.getInstance();
         gameSessionManager.createNewGame(session1, session2);
         gameSessionManager.deleteGame(session1, session2);
         assertNull(gameSessionManager.getGame(session1));

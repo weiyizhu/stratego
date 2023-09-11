@@ -14,8 +14,8 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
-    private Matchmaker matchmaker = Matchmaker.getInstance();
-    private GameSessionManager gameSessionManager = GameSessionManager.getInstance();
+    private Matchmaker matchmaker = MatchmakerImpl.getInstance();
+    private GameSessionManager gameSessionManager = GameSessionManagerImpl.getInstance();
 
     /**
      * Registers a WebSocketHandler to a specified URL path

@@ -21,9 +21,9 @@ public class FindGameHandlerTests {
     @Mock
     WebSocketSession oppSession;
     @Mock
-    MatchmakerUtils mockMatchmaker;
+    Matchmaker mockMatchmaker;
     @Mock
-    GameSessionManagerUtils mockGameSessionManager;
+    GameSessionManager mockGameSessionManager;
     @Mock
     Game mockGame;
 

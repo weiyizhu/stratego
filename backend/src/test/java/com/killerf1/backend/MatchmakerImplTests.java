@@ -17,7 +17,7 @@ import org.springframework.web.socket.WebSocketSession;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.WARN)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MatchmakerTests {
+public class MatchmakerImplTests {
     
     @Mock
     WebSocketSession session;
@@ -27,8 +27,8 @@ public class MatchmakerTests {
     @Test
     @Order(4)
     void createSingleInstance () {
-        Matchmaker matchmaker = Matchmaker.getInstance();
-        Matchmaker matchmaker2 = Matchmaker.getInstance();
+        Matchmaker matchmaker = MatchmakerImpl.getInstance();
+        Matchmaker matchmaker2 = MatchmakerImpl.getInstance();
         matchmaker.findMatch(session);
         assertEquals(matchmaker.getWaitingSessions(), matchmaker2.getWaitingSessions());
     }
@@ -36,7 +36,7 @@ public class MatchmakerTests {
     @Test 
     @Order(3)
     void noOppFound() {
-        Matchmaker matchmaker = Matchmaker.getInstance();
+        Matchmaker matchmaker = MatchmakerImpl.getInstance();
         assertNull(matchmaker.findMatch(session));
         assertEquals(1, matchmaker.getWaitingSessions().size());
     }
@@ -44,7 +44,7 @@ public class MatchmakerTests {
     @Test
     @Order(1)
     void OppFound() {
-        Matchmaker matchmaker = Matchmaker.getInstance();
+        Matchmaker matchmaker = MatchmakerImpl.getInstance();
         matchmaker.findMatch(session);
         assertEquals(session, matchmaker.findMatch(oppSession));
         assertEquals(0, matchmaker.getWaitingSessions().size());
@@ -53,7 +53,7 @@ public class MatchmakerTests {
     @Test
     @Order(2)
     void cancelRemovesFromWaitlist() {
-        Matchmaker matchmaker = Matchmaker.getInstance();
+        Matchmaker matchmaker = MatchmakerImpl.getInstance();
         matchmaker.findMatch(session);
         matchmaker.cancelFindMatch(session);
         assertEquals(0, matchmaker.getWaitingSessions().size());

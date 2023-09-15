@@ -9,11 +9,11 @@ public class FindGameHandler extends TextWebSocketHandler {
 
     private static final Logger logger = LogManager.getLogger();
     private final Matchmaker matchmaker;
-    private final GameSessionManager gameSessionManager;
+    private final GameManager gameManager;
 
-    public FindGameHandler(Matchmaker matchmaker, GameSessionManager gameSessionManager) {
+    public FindGameHandler(Matchmaker matchmaker, GameManager gameManager) {
         this.matchmaker = matchmaker;
-        this.gameSessionManager = gameSessionManager;
+        this.gameManager = gameManager;
     }
 
     /**
@@ -25,14 +25,14 @@ public class FindGameHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        logger.info("/findGame endpoint hit with client address: {}", session.getRemoteAddress());
+        logger.info("/findGame endpoint hit with client: {}", session.toString());
 
         WebSocketSession oppSession = matchmaker.findMatch(session);
         if (oppSession == null) {
             SocketHelper.send(session, "Waiting");
         } else {
-            Game game = gameSessionManager.createNewGame(session, oppSession);
-            SocketHelper.broadcast(game.getSessions(), "Game found");
+            String gameId = gameManager.createNewGame();
+            SocketHelper.broadcast(new WebSocketSession[] { session, oppSession }, gameId);
         }
     }
 }

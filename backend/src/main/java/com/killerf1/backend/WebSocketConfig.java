@@ -36,7 +36,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
      */
     @Bean
     public WebSocketHandler moveHandler() {
-        return new MoveHandler();
+        return new MoveHandler(gameManager);
     }
 
     @Bean

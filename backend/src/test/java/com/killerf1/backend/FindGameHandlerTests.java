@@ -17,35 +17,33 @@ import org.springframework.web.socket.WebSocketSession;
 public class FindGameHandlerTests {
 
     @Mock
-    WebSocketSession session;
+    WebSocketSession mockSession;
     @Mock
-    WebSocketSession oppSession;
+    WebSocketSession mockOppSession;
     @Mock
     Matchmaker mockMatchmaker;
     @Mock
-    GameSessionManager mockGameSessionManager;
-    @Mock
-    Game mockGame;
+    GameManager mockGameManager;
 
     @Test
     void noOppFound() {
         try (MockedStatic<SocketHelper> mockedSocketHelper = mockStatic(SocketHelper.class)) {
-            FindGameHandler findGameHandler = new FindGameHandler(mockMatchmaker, mockGameSessionManager);
-            findGameHandler.afterConnectionEstablished(session);
-            mockedSocketHelper.verify(() -> SocketHelper.send(session, "Waiting"));
+            FindGameHandler findGameHandler = new FindGameHandler(mockMatchmaker, mockGameManager);
+            findGameHandler.afterConnectionEstablished(mockSession);
+            mockedSocketHelper.verify(() -> SocketHelper.send(mockSession, "Waiting"));
         }
     }
 
     @Test
     void OppFound() {
         try (MockedStatic<SocketHelper> mockedSocketHelper = mockStatic(SocketHelper.class)) {
-            FindGameHandler findGameHandler = new FindGameHandler(mockMatchmaker, mockGameSessionManager);
-            WebSocketSession[] mockSessions = { session, oppSession };
-            when(mockMatchmaker.findMatch(session)).thenReturn(oppSession);
-            when(mockGame.getSessions()).thenReturn(mockSessions);
-            when(mockGameSessionManager.createNewGame(session, oppSession)).thenReturn(mockGame);
-            findGameHandler.afterConnectionEstablished(session);
-            mockedSocketHelper.verify(() -> SocketHelper.broadcast(mockSessions, "Game found"));
+            FindGameHandler findGameHandler = new FindGameHandler(mockMatchmaker, mockGameManager);
+            WebSocketSession[] mockSessions = { mockSession, mockOppSession };
+            String mockGameId = "12345";
+            when(mockMatchmaker.findMatch(mockSession)).thenReturn(mockOppSession);
+            when(mockGameManager.createNewGame()).thenReturn(mockGameId);
+            findGameHandler.afterConnectionEstablished(mockSession);
+            mockedSocketHelper.verify(() -> SocketHelper.broadcast(mockSessions, mockGameId));
         }
     }
 

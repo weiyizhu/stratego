@@ -1,23 +1,31 @@
 package com.killerf1.backend;
 
-import org.springframework.web.socket.WebSocketSession;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Game {
-    private WebSocketSession[] sessions;
+    private Board board;
+    private State state;
+    @Setter(AccessLevel.NONE)
+    private String redSessionId = null;
+    @Setter(AccessLevel.NONE)
+    private String blueSessionId = null;
+    private String id;
 
-    public Game(WebSocketSession session1, WebSocketSession session2) {
-        this.sessions = new WebSocketSession[2];
-        this.sessions[0] = session1;
-        this.sessions[1] = session2;
+    public Game(String gameId) {
+        this.board = new Board();
+        this.state = new PrepState(this);
+        this.id = gameId;
     }
 
-    @Override
-    public String toString() {
-        return "game started";
+    public void assignSideASession(String sessionId) {
+        if (redSessionId == null) {
+            redSessionId = sessionId;
+        } else if (blueSessionId == null) {
+            blueSessionId = sessionId;
+        }
     }
-
-    public WebSocketSession[] getSessions() {
-        return this.sessions;
-    }
-
 }

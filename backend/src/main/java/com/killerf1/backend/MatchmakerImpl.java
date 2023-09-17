@@ -6,6 +6,8 @@ import java.util.Random;
 
 import org.springframework.web.socket.WebSocketSession;
 
+import lombok.Synchronized;
+
 interface Matchmaker {
     public WebSocketSession findMatch(WebSocketSession session);
 
@@ -46,8 +48,8 @@ public final class MatchmakerImpl implements Matchmaker {
      *                communicates over
      * @return Opponent WebSocketSession if an opponent is found, else null
      */
-    @Override
-    public synchronized WebSocketSession findMatch(WebSocketSession session) {
+    @Override @Synchronized
+    public WebSocketSession findMatch(WebSocketSession session) {
         WebSocketSession oppSession = null;
         if (waitingSessions.size() == 0) {
             waitingSessions.add(session);
@@ -59,8 +61,8 @@ public final class MatchmakerImpl implements Matchmaker {
         return oppSession;
     }
 
-    @Override
-    public synchronized void cancelFindMatch(WebSocketSession session) {
+    @Override @Synchronized
+    public void cancelFindMatch(WebSocketSession session) {
         waitingSessions.remove(session);
     }
 

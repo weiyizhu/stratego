@@ -1,11 +1,16 @@
 package com.killerf1.backend;
 
+import java.net.URI;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+class GameNotFoundException extends Exception {
+}
 
 /**
  * This class implements business logic than handles various socket events
@@ -21,13 +26,17 @@ public class MoveHandler extends TextWebSocketHandler {
 
     public Game getGameFromSession(WebSocketSession session) {
         try {
-            String gameId = session.getUri().getQuery();
+            URI uri = session.getUri();
+            if (uri == null) {
+                throw new GameNotFoundException();
+            }
+            String gameId = uri.getQuery();
             Game game = gameManager.getGame(gameId);
             if (game == null) {
-                throw new Exception();
+                throw new GameNotFoundException();
             }
             return game;
-        } catch (Exception e) {
+        } catch (GameNotFoundException e) {
             SocketHelper.send(session, "Game not found");
             return null;
         }

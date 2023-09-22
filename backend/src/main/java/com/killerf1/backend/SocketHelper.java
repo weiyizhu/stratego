@@ -17,11 +17,7 @@ import org.springframework.web.socket.TextMessage;
 public class SocketHelper {
 
     private static final Logger logger = LogManager.getLogger();
-    private static Gson gson;
-
-    public SocketHelper(Gson gson) {
-        SocketHelper.gson = gson;
-    }
+    private static Gson gson = new Gson();
 
     public static void broadcast(WebSocketSession[] sessions, String msg) {
         try {

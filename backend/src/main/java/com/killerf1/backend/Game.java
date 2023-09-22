@@ -1,5 +1,7 @@
 package com.killerf1.backend;
 
+import org.springframework.web.socket.WebSocketSession;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +12,9 @@ public class Game {
     private Board board;
     private State state;
     @Setter(AccessLevel.NONE)
-    private String redSessionId = null;
+    private WebSocketSession redSession = null;
     @Setter(AccessLevel.NONE)
-    private String blueSessionId = null;
+    private WebSocketSession blueSession = null;
     private String id;
 
     public Game(String gameId) {
@@ -21,11 +23,11 @@ public class Game {
         this.id = gameId;
     }
 
-    public void assignSideASession(String sessionId) {
-        if (redSessionId == null) {
-            redSessionId = sessionId;
-        } else if (blueSessionId == null) {
-            blueSessionId = sessionId;
+    public void assignSideASession(WebSocketSession session) {
+        if (redSession == null) {
+            redSession = session;
+        } else if (blueSession == null) {
+            blueSession = session;
         }
     }
 }

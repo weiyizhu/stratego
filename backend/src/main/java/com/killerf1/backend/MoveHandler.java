@@ -63,7 +63,17 @@ public class MoveHandler extends TextWebSocketHandler {
         logger.info("Connection established with {}", session.toString());
         Game game = getGameFromSession(session);
         if (game != null) {
-            game.assignSideASession(session.getId());
+            game.assignSideASession(session);
+            WebSocketSession redSession = game.getRedSession();
+            WebSocketSession blueSession = game.getBlueSession();
+            if (redSession != null && blueSession != null) {
+                SocketHelper.send(redSession,
+                        new MoveHandlerProtocol(
+                                ClientGameState.ONCONNECTION, MsgType.SWITCH, String.valueOf(Side.RED.getValue())));
+                SocketHelper.send(blueSession,
+                        new MoveHandlerProtocol(
+                                ClientGameState.ONCONNECTION, MsgType.SWITCH, String.valueOf(Side.BLUE.getValue())));
+            }
         }
     }
 

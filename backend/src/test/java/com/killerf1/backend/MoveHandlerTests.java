@@ -87,7 +87,7 @@ public class MoveHandlerTests {
         MoveHandler spyMoveHandler = spy(moveHandler);
         when(spyMoveHandler.getGameFromSession(mockSession)).thenReturn(mockGame);
         spyMoveHandler.afterConnectionEstablished(mockSession);
-        verify(mockGame).assignSideASession(mockSession.getId());
+        verify(mockGame).assignSideASession(mockSession);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class MoveHandlerTests {
         MoveHandler spyMoveHandler = spy(moveHandler);
         when(spyMoveHandler.getGameFromSession(mockSession)).thenReturn(null);
         spyMoveHandler.afterConnectionEstablished(mockSession);
-        verify(mockGame, never()).assignSideASession(mockSession.getId());
+        verify(mockGame, never()).assignSideASession(mockSession);
     }
 
     @Test

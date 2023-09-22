@@ -5,6 +5,7 @@ import org.springframework.web.socket.WebSocketSession;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Synchronized;
 
 @Getter
 @Setter
@@ -23,6 +24,7 @@ public class Game {
         this.id = gameId;
     }
 
+    @Synchronized
     public void assignSideASession(WebSocketSession session) {
         if (redSession == null) {
             redSession = session;

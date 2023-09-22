@@ -24,12 +24,12 @@ enum MsgType {
     }
 }
 
-public class MoveHandlerProtocol {
+public class ServerMessageTemplate {
     public final String state;
     public final String type;
     public final String msg;
 
-    public MoveHandlerProtocol(ClientGameState gameState, MsgType msgType, String msg) {
+    public ServerMessageTemplate(ClientGameState gameState, MsgType msgType, String msg) {
         this.state = gameState.getName();
         this.type = msgType.getName();
         this.msg = msg;

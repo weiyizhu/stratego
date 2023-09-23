@@ -2,6 +2,7 @@ package com.killerf1.backend;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -34,5 +35,10 @@ public class FindGameHandler extends TextWebSocketHandler {
             String gameId = gameManager.createNewGame();
             SocketHelper.broadcast(new WebSocketSession[] { session, oppSession }, gameId);
         }
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        logger.info("Connection closed with {}", session.toString());
     }
 }

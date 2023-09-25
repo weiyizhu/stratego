@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AppContext, AppState } from "../App";
 import Loading from "../components/Loading";
-import { url } from "../constants";
+import { url } from "../helpers";
 import Button from "../components/Button";
 
 function FindGame() {

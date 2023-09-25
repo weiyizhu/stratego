@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../App";
-import { initBoard, url } from "../constants";
+import { AppContext, AppState } from "../App";
+import { initBoard, url, getArrangedBoard } from "../helpers";
 import Loading from "../components/Loading";
+import GameBoard from "../components/GameBoard";
+import Button from "../components/Button";
+import PrepBoard from "../components/PrepBoard";
 
 const GameState = {
   ONCONNECTION: "OnConnection",
@@ -22,10 +25,10 @@ const Side = {
   NEUTRAL: 0,
 };
 
-const valToSide = new Map();
-valToSide.set(-1, "Blue");
-valToSide.set(0, "Neutral");
-valToSide.set(1, "Red");
+const sideToText = new Map();
+sideToText.set(-1, "blue");
+sideToText.set(0, "neutral");
+sideToText.set(1, "red");
 
 function Game() {
   const [appInfo, setAppInfo] = useContext(AppContext);
@@ -90,15 +93,52 @@ function Game() {
     };
   }, [gameId]);
 
+  const options = () => {
+    if (gameState === GameState.PREP) {
+      return (
+        <>
+          <p className="text-xl p-3">You are in a game!</p>
+          <p className="text-xl p-3">
+            You are {sideToText.get(side)}. Arrange your board
+          </p>
+          <p className="p-3">
+            <Button
+              msg={"I'm Ready"}
+              onClickFn={() => {
+                const board = getArrangedBoard();
+                socket.send(JSON.stringify(board));
+              }}
+            />
+          </p>
+        </>
+      );
+    }
+  };
+
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div className="h-screen flex items-center justify-evenly">
       {gameState === GameState.ONCONNECTION ? (
         <Loading loadingMsg={"Loading..."} />
       ) : (
-        <>{gameState === GameState.PREP ? <p>prep</p> : <p>not prep</p>}</>
-      )}
-      {errorMsg && (
-        <p className="text-lg text-rose-600	 p-8">Error: {errorMsg}</p>
+        <>
+          <>
+            {gameState === GameState.PREP ? (
+              <PrepBoard side={side} board={board} />
+            ) : (
+              <GameBoard />
+            )}
+          </>
+          <div className="h-screen flex flex-col items-center justify-evenly">
+            <div className="flex flex-col items-center justify-center">
+              <p className="text-5xl p-8 mt-8">Stratego</p>
+              {options()}
+              {errorMsg && (
+                <p className="text-xl text-rose-600	 p-8">Error: {errorMsg}</p>
+              )}
+            </div>
+            <div className="basis-1/2"></div>
+          </div>
+        </>
       )}
     </div>
   );

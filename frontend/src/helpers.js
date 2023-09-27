@@ -24,6 +24,15 @@ export const initBoard = (side) => {
     board[i] = new Array(10).fill([0, 13]); // [(side, rank)], 13: empty
   }
 
+  board[4][2] = [0, 12];
+  board[4][3] = [0, 12];
+  board[5][2] = [0, 12];
+  board[5][3] = [0, 12];
+  board[4][6] = [0, 12];
+  board[4][7] = [0, 12];
+  board[5][6] = [0, 12];
+  board[5][7] = [0, 12];
+
   let k = 0;
   for (let i = 0; i < 4; i++) {
     for (let j = 0; j < 10; j++) {
@@ -46,13 +55,13 @@ export const getArrangedBoard = () => {
   const board = new Array(4);
 
   for (let i = 0; i < 4; i++) {
-    board[i] = new Array(10); // [(side, rank)], 13: empty
+    board[i] = new Array(10);
   }
 
   for (let i = 0; i < 4; i++) {
     for (let j = 0; j < 10; j++) {
       const element = document.getElementById(`${i + 6},${j}`);
-      const [side, rank] = element.getAttribute("piece-info").split(",");
+      const [_, rank] = element.getAttribute("piece-info").split(",");
       board[i][j] = parseInt(rank);
     }
   }

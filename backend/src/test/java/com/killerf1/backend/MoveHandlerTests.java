@@ -107,7 +107,7 @@ public class MoveHandlerTests {
         when(mockGame.getState()).thenReturn(mockState);
         spyMoveHandler.handleTextMessage(mockSession, mockMessage);
         verify(mockGame).getState();
-        verify(mockState).handleClientInput(mockSession, mockMessage.toString());
+        verify(mockState).handleClientInput(mockSession, mockMessage.getPayload());
     }
 
     @Test

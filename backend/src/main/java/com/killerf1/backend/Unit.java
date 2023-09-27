@@ -1,5 +1,8 @@
 package com.killerf1.backend;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.Getter;
 
 /**
@@ -9,8 +12,6 @@ import lombok.Getter;
 @Getter
 public enum Unit {
 
-    RIVER("River", -1, -2, new ZeroSpaceMoveStrategy()),
-    EMPTY("Empty", -1, -1, new ZeroSpaceMoveStrategy()),
     FLAG("Flag", 1, 0, new ZeroSpaceMoveStrategy()),
     SPY("Spy", 1, 1, new OneSpaceMoveStrategy()), // can beat marshal if initiates the move
     SCOUT("Scout", 8, 2, new InfiniteSpaceMoveStrategy()),
@@ -22,12 +23,47 @@ public enum Unit {
     COLONEL("Colonel", 2, 8, new OneSpaceMoveStrategy()),
     GENERAL("General", 1, 9, new OneSpaceMoveStrategy()),
     MARSHAL("Marshal", 1, 10, new OneSpaceMoveStrategy()),
-    BOMB("Bomb", 6, 11, new ZeroSpaceMoveStrategy());
+    BOMB("Bomb", 6, 11, new ZeroSpaceMoveStrategy()),
+    RIVER("River", -1, 12, new ZeroSpaceMoveStrategy()),
+    EMPTY("Empty", -1, 13, new ZeroSpaceMoveStrategy()),
+    UNKNOWN_ENEMY("Unknown", -1, 14, new ZeroSpaceMoveStrategy());
 
     public final String name;
     public final int rank;
     public final MoveStrategy moveStrategy;
     public final int quantity;
+    public final static Map<Integer, Integer> rankToQuantity = new HashMap<>() {
+        {
+            put(0, 1);
+            put(1, 1);
+            put(2, 8);
+            put(3, 5);
+            put(4, 4);
+            put(5, 4);
+            put(6, 4);
+            put(7, 3);
+            put(8, 2);
+            put(9, 1);
+            put(10, 1);
+            put(11, 6);
+        }
+    };
+    public final static Map<Integer, Unit> rankToUnit = new HashMap<>() {
+        {
+            put(0, Unit.FLAG);
+            put(1, Unit.SPY);
+            put(2, Unit.SCOUT);
+            put(3, Unit.MINER);
+            put(4, Unit.SERGEANT);
+            put(5, Unit.LIEUTENANT);
+            put(6, Unit.CAPTAIN);
+            put(7, Unit.MAJOR);
+            put(8, Unit.COLONEL);
+            put(9, Unit.GENERAL);
+            put(10, Unit.MARSHAL);
+            put(11, Unit.BOMB);
+        }
+    };
 
     /**
      * The constructor of the Unit enum class

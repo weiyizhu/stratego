@@ -54,7 +54,7 @@ public class MoveHandler extends TextWebSocketHandler {
         logger.info("Message received: {}", message.toString());
         Game game = getGameFromSession(session);
         if (game != null) {
-            game.getState().handleClientInput(session, message.toString());
+            game.getState().handleClientInput(session, message.getPayload());
         }
     }
 

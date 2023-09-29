@@ -10,7 +10,7 @@ import lombok.Synchronized;
 @Getter
 @Setter
 public class Game {
-    private Board board;
+    private Board boardObject;
     private State state;
     @Setter(AccessLevel.NONE)
     private WebSocketSession redSession = null;
@@ -19,7 +19,7 @@ public class Game {
     private String id;
 
     public Game(String gameId) {
-        this.board = new Board();
+        this.boardObject = new Board();
         this.state = new PrepState(this);
         this.id = gameId;
     }

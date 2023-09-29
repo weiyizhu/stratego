@@ -17,11 +17,13 @@ public class Game {
     @Setter(AccessLevel.NONE)
     private WebSocketSession blueSession = null;
     private String id;
+    private Side movingSide;
 
     public Game(String gameId) {
         this.boardObject = new Board();
         this.state = new PrepState(this);
         this.id = gameId;
+        this.movingSide = Side.RED;
     }
 
     @Synchronized

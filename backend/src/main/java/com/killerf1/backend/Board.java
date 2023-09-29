@@ -7,10 +7,18 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 class InvalidBoardException extends Exception {
 
+}
+
+@AllArgsConstructor
+@Getter
+class MoveResponse {
+  Coordinate visibleCoordinate;
+  Side winner;
 }
 
 @Getter
@@ -89,7 +97,41 @@ public class Board {
     } else {
       throw new InvalidBoardException();
     }
+  }
 
+  private void updatePieceOnBoard(Coordinate coordinate, Piece piece) {
+    int i = coordinate.row;
+    int j = coordinate.col;
+    this.board[i][j] = piece;
+  }
+
+  /**
+   * Makes the move from currPos to nextPos and updates the board accordingly
+   * 
+   * @param currPos The position the piece is on
+   * @param nextPos The position the piece wants to move to
+   * @return Coordinate of visible piece (could be null) and winner (could be null)
+   */
+  public MoveResponse move(Coordinate currPos, Coordinate nextPos) {
+    Piece attackPiece = this.getPiece(currPos);
+    Piece defendPiece = this.getPiece(nextPos);
+
+    Piece winningPiece = Piece.decideWinningPiece(attackPiece, defendPiece);
+    updatePieceOnBoard(currPos, new Piece(Unit.EMPTY, Side.NEUTRAL));
+    if (winningPiece == null) {
+      updatePieceOnBoard(nextPos, new Piece(Unit.EMPTY, Side.NEUTRAL));
+    } else {
+      updatePieceOnBoard(nextPos, winningPiece);
+    }
+
+    if (winningPiece != null && defendPiece.getUnit() != Unit.EMPTY && winningPiece.equals(attackPiece)) {
+      if (defendPiece.getUnit() == Unit.FLAG) {
+        return new MoveResponse(nextPos, winningPiece.getSide());
+      }
+      return new MoveResponse(nextPos, null);
+    } else {
+      return new MoveResponse(null, null);
+    }
   }
 
   public String serializedRedBoard(Coordinate visibleCoordinate) {
@@ -128,14 +170,14 @@ public class Board {
         int rank = piece.getUnit().getRank();
 
         if (visibleCoordinate != null && visibleCoordinate.row == i && visibleCoordinate.col == j) {
-          serializedBoard[9-i][9-j] = new int[] { side, rank };
+          serializedBoard[9 - i][9 - j] = new int[] { side, rank };
           continue;
         }
 
         if (side == Side.RED.getValue()) {
-          serializedBoard[9-i][9-j] = new int[] { side, Unit.UNKNOWN_ENEMY.getRank() };
+          serializedBoard[9 - i][9 - j] = new int[] { side, Unit.UNKNOWN_ENEMY.getRank() };
         } else {
-          serializedBoard[9-i][9-j] = new int[] { side, rank };
+          serializedBoard[9 - i][9 - j] = new int[] { side, rank };
         }
       }
     }

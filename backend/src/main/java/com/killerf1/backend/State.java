@@ -41,26 +41,91 @@ class PrepState extends State {
         WebSocketSession blueSession = this.game.getBlueSession();
         String redBoard = boardObject.serializedRedBoard(null);
         String blueBoard = boardObject.serializedBlueBoard(null);
-        logger.info("red board: {}, blue board: {}", redBoard, blueBoard);
-        SocketHelper.send(redSession, new ServerMessageTemplate(ClientGameState.PREP, MsgType.SWITCH, redBoard));
-        SocketHelper.send(blueSession, new ServerMessageTemplate(ClientGameState.PREP, MsgType.SWITCH, blueBoard));
+        SocketHelper.send(redSession,
+            new ServerMessageTemplate(ClientGameState.PREP, MsgType.SWITCH, redBoard, Side.RED));
+        SocketHelper.send(blueSession,
+            new ServerMessageTemplate(ClientGameState.PREP, MsgType.SWITCH, blueBoard, Side.RED));
       }
     } catch (InvalidBoardException e) {
-      SocketHelper.send(session, new ServerMessageTemplate(ClientGameState.PREP, MsgType.ERROR, "Invalid Board"));
+      SocketHelper.send(session,
+          new ServerMessageTemplate(ClientGameState.PREP, MsgType.ERROR, "Invalid Board", Side.RED));
     }
   }
 }
 
 class GameState extends State {
   private static final Logger logger = LogManager.getLogger();
+  private final Gson gson = new Gson();
 
   public GameState(Game game) {
     super(game);
   }
 
+  private int[][] getPositionsFromInput(String input, Side side) {
+    int[][] positions = gson.fromJson(input, int[][].class);
+    if (side == Side.BLUE) {
+      positions = new int[][] { new int[] { 9 - positions[0][0], 9 - positions[0][1] },
+          new int[] { 9 - positions[1][0], 9 - positions[1][1] } };
+    }
+    return positions;
+  }
+
   @Override
   public void handleClientInput(WebSocketSession session, String input) {
     logger.info("In Game state, input: {}, session: {}", input, session.toString());
+    WebSocketSession redSession = this.game.getRedSession();
+    WebSocketSession blueSession = this.game.getBlueSession();
+    WebSocketSession[] gameSessions = new WebSocketSession[] { redSession, blueSession };
+    Side side = session == redSession ? Side.RED : Side.BLUE;
+    Side oppSide = session == redSession ? Side.BLUE : Side.RED;
+    Side movingSide = this.game.getMovingSide();
+
+    if (input.equals("Surrender")) {
+      this.game.setState(new EndState(game));
+      SocketHelper.broadcast(gameSessions,
+          new ServerMessageTemplate(ClientGameState.GAME, MsgType.SWITCH, String.valueOf(oppSide.getValue()),
+              movingSide));
+      SocketHelper.closeGame(gameSessions);
+    } else {
+      if (side != movingSide) {
+        SocketHelper.send(session,
+            new ServerMessageTemplate(ClientGameState.GAME, MsgType.ERROR, "Not your turn", movingSide));
+        return;
+      }
+      int[][] positions = getPositionsFromInput(input, side);
+
+      Coordinate currPos = new Coordinate(positions[0][0], positions[0][1]);
+      Coordinate nextPos = new Coordinate(positions[1][0], positions[1][1]);
+      Board boardObject = this.game.getBoardObject();
+      Piece currPiece = boardObject.getPiece(currPos);
+      MoveStrategy moveStrategy = currPiece.getUnit().getMoveStrategy();
+
+      if (moveStrategy.isValidMove(boardObject, currPos, nextPos)) {
+        MoveResponse moveResponse = boardObject.move(currPos, nextPos);
+        Coordinate visibleCoordinate = moveResponse.getVisibleCoordinate();
+        Side winner = moveResponse.getWinner();
+        this.game.setMovingSide(oppSide);
+        movingSide = this.game.getMovingSide();
+
+        String redBoard = boardObject.serializedRedBoard(visibleCoordinate);
+        String blueBoard = boardObject.serializedBlueBoard(visibleCoordinate);
+        SocketHelper.send(redSession,
+            new ServerMessageTemplate(ClientGameState.GAME, MsgType.INFO, redBoard, movingSide));
+        SocketHelper.send(blueSession,
+            new ServerMessageTemplate(ClientGameState.GAME, MsgType.INFO, blueBoard, movingSide));
+
+        if (winner != null) {
+          this.game.setState(new EndState(game));
+          SocketHelper.broadcast(gameSessions,
+              new ServerMessageTemplate(ClientGameState.GAME, MsgType.SWITCH, String.valueOf(winner.getValue()),
+                  movingSide));
+          SocketHelper.closeGame(gameSessions);
+        }
+      } else {
+        SocketHelper.send(session,
+            new ServerMessageTemplate(ClientGameState.GAME, MsgType.ERROR, "Invalid move", movingSide));
+      }
+    }
   }
 }
 

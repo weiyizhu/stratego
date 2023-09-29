@@ -29,6 +29,16 @@ public class SocketHelper {
         }
     }
 
+    public static void broadcast(WebSocketSession[] sessions, ServerMessageTemplate msg) {
+        try {
+            for (WebSocketSession session : sessions) {
+                session.sendMessage(new TextMessage(gson.toJson(msg)));
+            }
+        } catch (IOException e) {
+            logger.catching(e);
+        }
+    }
+
     public static void send(WebSocketSession session, String msg) {
         try {
             session.sendMessage(new TextMessage(msg));
@@ -40,6 +50,16 @@ public class SocketHelper {
     public static void send(WebSocketSession session, ServerMessageTemplate msg) {
         try {
             session.sendMessage(new TextMessage(gson.toJson(msg)));
+        } catch (IOException e) {
+            logger.catching(e);
+        }
+    }
+
+    public static void closeGame(WebSocketSession[] sessions) {
+        try {
+            for (WebSocketSession session : sessions) {
+                session.close();
+            }
         } catch (IOException e) {
             logger.catching(e);
         }

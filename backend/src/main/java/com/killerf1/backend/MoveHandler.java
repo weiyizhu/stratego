@@ -71,10 +71,10 @@ public class MoveHandler extends TextWebSocketHandler {
         if (redSession != null && blueSession != null) {
             SocketHelper.send(redSession,
                     new ServerMessageTemplate(
-                            ClientGameState.ONCONNECTION, MsgType.SWITCH, String.valueOf(Side.RED.getValue())));
+                            ClientGameState.ONCONNECTION, MsgType.SWITCH, String.valueOf(Side.RED.getValue()), Side.RED));
             SocketHelper.send(blueSession,
                     new ServerMessageTemplate(
-                            ClientGameState.ONCONNECTION, MsgType.SWITCH, String.valueOf(Side.BLUE.getValue())));
+                            ClientGameState.ONCONNECTION, MsgType.SWITCH, String.valueOf(Side.BLUE.getValue()), Side.RED));
         }
     }
 

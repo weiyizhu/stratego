@@ -38,37 +38,47 @@ function Game() {
   const [board, setBoard] = useState();
   const [errorMsg, setErrorMsg] = useState();
   const [socket, setSocket] = useState();
+  const [isWaitingResponse, setIsWaitingResponse] = useState(false);
+  const [winner, setWinner] = useState();
+  const [movingSide, setMovingSide] = useState(Side.RED);
 
   const onError = (event) => {
     setErrorMsg(event.data);
   };
   const onMessage = (event) => {
-    const { state, type, msg } = JSON.parse(event.data);
+    const { state, type, msg, side } = JSON.parse(event.data);
     switch (state) {
       case GameState.ONCONNECTION:
         if (type === MsgType.SWITCH) {
           const side = parseInt(msg);
           setSide(side);
-          console.log("side: ", side);
           setBoard(initBoard(side));
           setGameState(GameState.PREP);
         }
         break;
       case GameState.PREP:
+        setIsWaitingResponse(false);
         if (type === MsgType.SWITCH) {
-          setBoard(msg);
+          const newBoard = JSON.parse(msg);
+          setBoard(newBoard);
           setGameState(GameState.GAME);
         } else if (type === MsgType.ERROR) {
           setErrorMsg(msg);
         }
         break;
       case GameState.GAME:
+        setMovingSide(side);
         if (type === MsgType.SWITCH) {
+          const winner = parseInt(msg);
+          setWinner(winner);
           setGameState(GameState.END);
+          setErrorMsg();
         } else if (type === MsgType.ERROR) {
           setErrorMsg(msg);
         } else {
-          setBoard(msg);
+          const newBoard = JSON.parse(msg);
+          setBoard(newBoard);
+          setErrorMsg();
         }
         break;
       default:
@@ -102,11 +112,47 @@ function Game() {
             You are {sideToText.get(side)}. Arrange your board
           </p>
           <p className="p-3">
+            {isWaitingResponse ? (
+              <Loading loadingMsg={"Waiting for your opponent"} />
+            ) : (
+              <Button
+                msg={"I'm Ready"}
+                onClickFn={() => {
+                  const board = getArrangedBoard();
+                  socket.send(JSON.stringify(board));
+                  setIsWaitingResponse(true);
+                }}
+              />
+            )}
+          </p>
+        </>
+      );
+    } else if (gameState === GameState.GAME) {
+      const text = movingSide === side ? "Your turn" : "Opponent's turn";
+      return (
+        <>
+          <p className="text-xl p-3">{text}</p>
+          <p className="pt-3">
             <Button
-              msg={"I'm Ready"}
+              msg={"Surrender"}
               onClickFn={() => {
-                const board = getArrangedBoard();
-                socket.send(JSON.stringify(board));
+                socket.send("Surrender");
+              }}
+            />
+          </p>
+        </>
+      );
+    } else if (gameState === GameState.END) {
+      const text = winner === side ? "You win" : "You lose";
+      return (
+        <>
+          <p className="text-xl p-3">{text}</p>
+          <p className="pt-3">
+            <Button
+              msg={"Return to Home Page"}
+              onClickFn={() => {
+                socket.close();
+                setAppInfo({ state: AppState.Home, gameId: null });
               }}
             />
           </p>
@@ -125,7 +171,7 @@ function Game() {
             {gameState === GameState.PREP ? (
               <PrepBoard side={side} board={board} />
             ) : (
-              <GameBoard />
+              <GameBoard side={side} board={board} socket={socket} />
             )}
           </>
           <div className="h-screen flex flex-col items-center justify-evenly">
@@ -133,7 +179,7 @@ function Game() {
               <p className="text-5xl p-8 mt-8">Stratego</p>
               {options()}
               {errorMsg && (
-                <p className="text-xl text-rose-600	 p-8">Error: {errorMsg}</p>
+                <p className="text-xl text-rose-600	p-6">Error: {errorMsg}</p>
               )}
             </div>
             <div className="basis-1/2"></div>

@@ -12,6 +12,10 @@ java {
 	sourceCompatibility = '17'
 }
 
+bootJar {
+  destinationDirectory = file("./deploy")
+}
+
 repositories {
 	mavenCentral()
 }

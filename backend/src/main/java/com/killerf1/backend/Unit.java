@@ -80,14 +80,4 @@ public enum Unit {
         this.rank = rank;
         this.moveStrategy = moveStrategy;
     }
-
-    /**
-     * This static method determines the winning unit by comparing the ranks and
-     * other special interactions
-     * 
-     * @return Thw winning unit
-     */
-    public static Unit decideWinningUnit(Unit unit1, Unit unit2) {
-        return unit1;
-    }
 }

@@ -1,6 +1,6 @@
-const ipAddress = "127.0.0.1";
-const port = 8080;
-export const url = `ws://${ipAddress}:${port}`;
+const ipAddress = "Stratego-4-env.eba-p6kqpk2a.us-west-2.elasticbeanstalk.com";
+
+export const url = `ws://${ipAddress}`;
 
 const pieces = [
   0,

@@ -47,6 +47,9 @@ function Game() {
   };
   const onMessage = (event) => {
     const { state, type, msg, side } = JSON.parse(event.data);
+    if (type === MsgType.INFO && msg === "Opponent disconnected") {
+      setGameState(GameState.END);
+    }
     switch (state) {
       case GameState.ONCONNECTION:
         if (type === MsgType.SWITCH) {
@@ -143,10 +146,17 @@ function Game() {
         </>
       );
     } else if (gameState === GameState.END) {
-      const text = winner === side ? "You win" : "You lose";
       return (
         <>
-          <p className="text-xl p-3">{text}</p>
+          {winner ? (
+            <p className="text-xl p-3">
+              {winner === side ? "You win" : "You lose"}
+            </p>
+          ) : (
+            <p className="text-xl p-3">
+              Opponent disconnected
+            </p>
+          )}
           <p className="pt-3">
             <Button
               msg={"Return to Home Page"}

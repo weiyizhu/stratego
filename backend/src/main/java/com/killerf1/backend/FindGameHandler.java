@@ -40,5 +40,6 @@ public class FindGameHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         logger.info("Connection closed with {}", session.toString());
+        matchmaker.cancelFindMatch(session);
     }
 }

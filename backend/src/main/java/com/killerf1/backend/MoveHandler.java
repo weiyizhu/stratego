@@ -81,6 +81,12 @@ public class MoveHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         logger.info("Connection closed with {}", session.getRemoteAddress());
+        Game game = getGameFromSession(session);
+        WebSocketSession redSession = game.getRedSession();
+        WebSocketSession blueSession = game.getBlueSession();
+        WebSocketSession oppSession = session == redSession ? blueSession : redSession;
+
+        SocketHelper.send(oppSession, new ServerMessageTemplate(null, MsgType.INFO, "Opponent disconnected", null));
     }
 
     @Override

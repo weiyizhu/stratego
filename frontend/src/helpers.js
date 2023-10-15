@@ -1,6 +1,6 @@
-const ipAddress = "Stratego-4-env.eba-p6kqpk2a.us-west-2.elasticbeanstalk.com";
+const ipAddress = "stratego-backend.us-west-2.elasticbeanstalk.com";
 
-export const url = `ws://${ipAddress}`;
+export const url = `wss://${ipAddress}`;
 
 const pieces = [
   0,

@@ -1,4 +1,4 @@
-const ipAddress = "stratego-backend.us-west-2.elasticbeanstalk.com";
+const ipAddress = "stratego-backend.net";
 
 export const url = `wss://${ipAddress}`;
 

@@ -64,4 +64,12 @@ public class SocketHelper {
             logger.catching(e);
         }
     }
+
+    public static void closeSession(WebSocketSession session) {
+        try {
+            session.close();
+        } catch (IOException e) {
+            logger.catching(e);
+        }
+    }
 }

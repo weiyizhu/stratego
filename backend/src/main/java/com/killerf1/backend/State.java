@@ -139,5 +139,6 @@ class EndState extends State {
   @Override
   public void handleClientInput(WebSocketSession session, String input) {
     logger.info("In End state, input: {}, session: {}", input, session.toString());
+    SocketHelper.closeSession(session);
   }
 }

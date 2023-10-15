@@ -1,8 +1,5 @@
 package com.killerf1.backend;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * This interface provides an abstraction for the three types of move strategies
  */

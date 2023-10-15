@@ -85,8 +85,10 @@ public class MoveHandler extends TextWebSocketHandler {
         WebSocketSession redSession = game.getRedSession();
         WebSocketSession blueSession = game.getBlueSession();
         WebSocketSession oppSession = session == redSession ? blueSession : redSession;
-
-        SocketHelper.send(oppSession, new ServerMessageTemplate(null, MsgType.INFO, "Opponent disconnected", null));
+        if (oppSession.isOpen()) {
+            game.setState(new EndState(game));
+            SocketHelper.send(oppSession, new ServerMessageTemplate(ClientGameState.GAME, MsgType.INFO, "Opponent disconnected", Side.NEUTRAL));
+        }
     }
 
     @Override
